@@ -23,7 +23,7 @@ const candidato = new Candidato(
     "Bootstrap",
     "JavaScript",
     "Git",
-    "LÛgica de programaÁ„o",
+    "L√≥gica de programa√ß√£o",
     "Testes de software"
   ],
   ["Angular", "TypeScript", "SQL"]
@@ -69,7 +69,7 @@ class VagaRemota extends Vaga {
 }
 
 const vagas = [
-  new Vaga("Novo Horizonte", "Front-End J˙nior", [
+  new Vaga("Novo Horizonte", "Front-End J√∫nior", [
     "HTML",
     "CSS",
     "JavaScript",
@@ -77,25 +77,25 @@ const vagas = [
     "React"
   ]),
 
-  new VagaRemota("New Era", "Desenvolvedor(a) Web J˙nior", [
+  new VagaRemota("New Era", "Desenvolvedor(a) Web J√∫nior", [
     "HTML",
     "CSS",
     "JavaScript",
-    "LÛgica de programaÁ„o",
+    "L√≥gica de programa√ß√£o",
     "Consumo de APIs",
     "Acessibilidade"
   ], 3000),
 
-  new Vaga("Inova Brasil", "Desenvolvedor(a) Front-End J˙nior", [
+  new Vaga("Inova Brasil", "Desenvolvedor(a) Front-End J√∫nior", [
     "JavaScript",
     "React",
     "TypeScript",
     "Git",
-    "Componentes reutiliz·veis",
+    "Componentes reutiliz√°veis",
     "Testes automatizados"
   ]),
 
-  new Vaga("New Nexus", "Desenvolvedor Front-End J˙nior", [
+  new Vaga("New Nexus", "Desenvolvedor Front-End J√∫nior", [
     "HTML",
     "CSS",
     "JavaScript",
@@ -103,7 +103,7 @@ const vagas = [
     "Bootstrap"
   ]),
 
-  new VagaRemota("Tech Plus", "Desenvolvedor Front-End J˙nior (React)", [
+  new VagaRemota("Tech Plus", "Desenvolvedor Front-End J√∫nior (React)", [
     "HTML",
     "CSS",
     "JavaScript",
@@ -112,7 +112,7 @@ const vagas = [
     "TypeScript"
   ], 4000),
 
-  new Vaga("Astro SoluÁıes", "Desenvolvedor Front-End J˙nior", [
+  new Vaga("Astro Solu√ß√µes", "Desenvolvedor Front-End J√∫nior", [
     "JavaScript",
     "React",
     "TypeScript",
@@ -126,23 +126,105 @@ const classificarCompatibilidade = (percentual) => {
   if (percentual >= 80) {
     return "Alta compatibilidade";
   } else if (percentual >= 50) {
-    return "MÈdia compatibilidade";
+    return "M√©dia compatibilidade";
   } else {
     return "Baixa compatibilidade";
   }
 };
 
+const encontrarMelhorVaga = (candidato, vagas) => {
+  return vagas.reduce((melhor, atual) => {
+    const compatibilidadeMelhor =
+      melhor.calcularCompatibilidade(candidato);
+    const compatibilidadeAtual =
+      atual.calcularCompatibilidade(candidato);
+
+    if (compatibilidadeAtual > compatibilidadeMelhor) {
+      return atual;
+    }
+
+    return melhor;
+  });
+};
+
+const montarFaltantes = (candidato, vagas) => {
+  const faltantes = {};
+
+  for (let i = 0; i < vagas.length; i++) {
+    const vaga = vagas[i];
+    const percentual = vaga.calcularCompatibilidade(candidato);
+    const habilidadesFaltantes = vaga.listarFaltantes(candidato);
+
+    for (let j = 0; j < habilidadesFaltantes.length; j++) {
+      const habilidade = habilidadesFaltantes[j];
+
+      if (!faltantes[habilidade]) {
+        faltantes[habilidade] = {
+          quantidade: 0,
+          maiorCompatibilidade: 0
+        };
+      }
+
+      faltantes[habilidade].quantidade++;
+
+      if (percentual > faltantes[habilidade].maiorCompatibilidade) {
+        faltantes[habilidade].maiorCompatibilidade = percentual;
+      }
+    }
+  }
+
+  return faltantes;
+};
+
+const gerarRecomendacaoEstudos = (candidato, vagas) => {
+  const faltantes = montarFaltantes(candidato, vagas);
+  let habilidadesRestantes = Object.keys(faltantes);
+  const ranking = [];
+
+  while (habilidadesRestantes.length > 0) {
+    const prioritaria = habilidadesRestantes.reduce((melhor, atual) => {
+      const habilidadeAtual = faltantes[atual];
+      const habilidadeMelhor = faltantes[melhor];
+
+      if (habilidadeAtual.quantidade > habilidadeMelhor.quantidade) {
+        return atual;
+      }
+
+      if (
+        habilidadeAtual.quantidade === habilidadeMelhor.quantidade &&
+        habilidadeAtual.maiorCompatibilidade >
+          habilidadeMelhor.maiorCompatibilidade
+      ) {
+        return atual;
+      }
+
+      return melhor;
+    });
+
+    ranking.push({
+      habilidade: prioritaria,
+      quantidade: faltantes[prioritaria].quantidade
+    });
+
+    habilidadesRestantes = habilidadesRestantes.filter(
+      (habilidade) => habilidade !== prioritaria
+    );
+  }
+
+  return ranking;
+};
+
 const gerarRelatorio = (candidato, vagas) => {
-  console.log("===== SKILLMATCH JS: RELAT”RIO =====");
+  console.log("===== SKILLMATCH JS: RELAT√ìRIO =====");
   console.log(`Candidato: ${candidato.nome}`);
-  console.log(`¡rea de interesse: ${candidato.areaInteresse}`);
-  console.log(`ExperiÍncia: ${candidato.experienciaAnos} ano(s)`);
+  console.log(`√Årea de interesse: ${candidato.areaInteresse}`);
+  console.log(`Experi√™ncia: ${candidato.experienciaAnos} ano(s)`);
   console.log(`Habilidades: ${candidato.habilidades.join(", ")}`);
   console.log(
     `Em aprendizado: ${candidato.emAprendizado.join(", ")}`
   );
 
-  console.log("\n===== AN¡LISE DAS VAGAS =====");
+  console.log("\n===== AN√ÅLISE DAS VAGAS =====");
 
   for (let i = 0; i < vagas.length; i++) {
     const vaga = vagas[i];
@@ -161,7 +243,27 @@ const gerarRelatorio = (candidato, vagas) => {
     }
   }
 
-  console.log("\n===== FIM DO RELAT”RIO =====");
+  const melhorVaga = encontrarMelhorVaga(candidato, vagas);
+  const percentualMelhorVaga =
+    melhorVaga.calcularCompatibilidade(candidato);
+
+  console.log("\n===== MELHOR VAGA =====");
+  console.log(melhorVaga.resumo());
+  console.log(
+    `Compatibilidade: ${percentualMelhorVaga}% - ${classificarCompatibilidade(percentualMelhorVaga)}`
+  );
+
+  const recomendacoes = gerarRecomendacaoEstudos(candidato, vagas);
+
+  console.log("\n===== PRIORIDADE DE ESTUDO =====");
+
+  for (let i = 0; i < recomendacoes.length; i++) {
+    console.log(
+      `${i + 1}. ${recomendacoes[i].habilidade} ‚Äî falta em ${recomendacoes[i].quantidade} vaga(s)`
+    );
+  }
+
+  console.log("\n===== FIM DO RELAT√ìRIO =====");
 };
 
 gerarRelatorio(candidato, vagas);
