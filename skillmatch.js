@@ -121,3 +121,13 @@ const vagas = [
     "Node.js"
   ])
 ];
+
+const classificarCompatibilidade = (percentual) => {
+  if (percentual >= 80) {
+    return "Alta compatibilidade";
+  } else if (percentual >= 50) {
+    return "Média compatibilidade";
+  } else {
+    return "Baixa compatibilidade";
+  }
+};
