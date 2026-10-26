@@ -24,7 +24,7 @@ const candidato = new Candidato(
     "JavaScript",
     "Git",
     "Lógica de programação",
-    "Testes de software"
+    "Testes de software",
   ],
   ["Angular", "TypeScript", "SQL"]
 );
@@ -40,6 +40,10 @@ class Vaga {
     const atendidos = this.requisitos.filter((requisito) =>
       candidato.possuiHabilidade(requisito)
     );
+
+    if (this.requisitos.length === 0) {
+      return 0;
+    }
 
     return Math.round(
       (atendidos.length / this.requisitos.length) * 100
@@ -74,7 +78,7 @@ const vagas = [
     "CSS",
     "JavaScript",
     "Git",
-    "React"
+    "React",
   ]),
 
   new VagaRemota(
@@ -86,7 +90,7 @@ const vagas = [
       "JavaScript",
       "Lógica de programação",
       "Consumo de APIs",
-      "Acessibilidade"
+      "Acessibilidade",
     ],
     3000
   ),
@@ -97,7 +101,7 @@ const vagas = [
     "TypeScript",
     "Git",
     "Componentes reutilizáveis",
-    "Testes automatizados"
+    "Testes automatizados",
   ]),
 
   new Vaga("New Nexus", "Desenvolvedor Front-End Júnior", [
@@ -105,7 +109,7 @@ const vagas = [
     "CSS",
     "JavaScript",
     "Git",
-    "Bootstrap"
+    "Bootstrap",
   ]),
 
   new VagaRemota(
@@ -117,7 +121,7 @@ const vagas = [
       "JavaScript",
       "React",
       "Git",
-      "TypeScript"
+      "TypeScript",
     ],
     4000
   ),
@@ -128,8 +132,8 @@ const vagas = [
     "TypeScript",
     "Testes automatizados",
     "Consumo de APIs",
-    "Node.js"
-  ])
+    "Node.js",
+  ]),
 ];
 
 const classificarCompatibilidade = (percentual) => {
@@ -148,8 +152,8 @@ const analisarVaga = (vaga, candidato, callback) => {
 
   callback({
     vaga: vaga.resumo(),
-    percentual: percentual,
-    classificacao: classificacao
+    percentual,
+    classificacao,
   });
 };
 
@@ -164,6 +168,10 @@ const criarContadorAnalises = () => {
 
 const encontrarMelhorVaga = (candidato, vagas) => {
   return vagas.reduce((melhor, atual) => {
+    if (melhor === null) {
+      return atual;
+    }
+
     const compatibilidadeMelhor =
       melhor.calcularCompatibilidade(candidato);
 
@@ -175,7 +183,7 @@ const encontrarMelhorVaga = (candidato, vagas) => {
     }
 
     return melhor;
-  });
+  }, null);
 };
 
 const montarFaltantes = (candidato, vagas) => {
@@ -183,7 +191,6 @@ const montarFaltantes = (candidato, vagas) => {
 
   for (let i = 0; i < vagas.length; i++) {
     const vaga = vagas[i];
-    const percentual = vaga.calcularCompatibilidade(candidato);
     const habilidadesFaltantes = vaga.listarFaltantes(candidato);
 
     for (let j = 0; j < habilidadesFaltantes.length; j++) {
@@ -192,15 +199,10 @@ const montarFaltantes = (candidato, vagas) => {
       if (!faltantes[habilidade]) {
         faltantes[habilidade] = {
           quantidade: 0,
-          maiorCompatibilidade: 0
         };
       }
 
       faltantes[habilidade].quantidade++;
-
-      if (percentual > faltantes[habilidade].maiorCompatibilidade) {
-        faltantes[habilidade].maiorCompatibilidade = percentual;
-      }
     }
   }
 
@@ -221,20 +223,12 @@ const gerarRecomendacaoEstudos = (candidato, vagas) => {
         return atual;
       }
 
-      if (
-        habilidadeAtual.quantidade === habilidadeMelhor.quantidade &&
-        habilidadeAtual.maiorCompatibilidade >
-          habilidadeMelhor.maiorCompatibilidade
-      ) {
-        return atual;
-      }
-
       return melhor;
     });
 
     ranking.push({
       habilidade: prioritaria,
-      quantidade: faltantes[prioritaria].quantidade
+      quantidade: faltantes[prioritaria].quantidade,
     });
 
     habilidadesRestantes = habilidadesRestantes.filter(
@@ -251,8 +245,12 @@ const gerarRelatorio = (candidato, vagas) => {
   console.log(`Área de interesse: ${candidato.areaInteresse}`);
   console.log(`Experiência: ${candidato.experienciaAnos} ano(s)`);
   console.log(`Habilidades: ${candidato.habilidades.join(", ")}`);
+  console.log(`Em aprendizado: ${candidato.emAprendizado.join(", ")}`);
+
+  const empresas = vagas.map((vaga) => vaga.empresa);
+
   console.log(
-    `Em aprendizado: ${candidato.emAprendizado.join(", ")}`
+    `\nVagas analisadas (${empresas.length}): ${empresas.join(", ")}`
   );
 
   console.log("\n===== ANÁLISE DAS VAGAS =====");
@@ -280,23 +278,33 @@ const gerarRelatorio = (candidato, vagas) => {
   }
 
   const melhorVaga = encontrarMelhorVaga(candidato, vagas);
-  const percentualMelhorVaga =
-    melhorVaga.calcularCompatibilidade(candidato);
 
   console.log("\n===== MELHOR VAGA =====");
-  console.log(melhorVaga.resumo());
-  console.log(
-    `Compatibilidade: ${percentualMelhorVaga}% - ${classificarCompatibilidade(percentualMelhorVaga)}`
-  );
+
+  if (melhorVaga === null) {
+    console.log("Não há vagas disponíveis para análise.");
+  } else {
+    const percentualMelhorVaga =
+      melhorVaga.calcularCompatibilidade(candidato);
+
+    console.log(melhorVaga.resumo());
+    console.log(
+      `Compatibilidade: ${percentualMelhorVaga}% - ${classificarCompatibilidade(percentualMelhorVaga)}`
+    );
+  }
 
   const recomendacoes = gerarRecomendacaoEstudos(candidato, vagas);
 
   console.log("\n===== PRIORIDADE DE ESTUDO =====");
 
-  for (let i = 0; i < recomendacoes.length; i++) {
-    console.log(
-      `${i + 1}. ${recomendacoes[i].habilidade} — falta em ${recomendacoes[i].quantidade} vaga(s)`
-    );
+  if (recomendacoes.length === 0) {
+    console.log("Nenhuma habilidade pendente identificada.");
+  } else {
+    for (let i = 0; i < recomendacoes.length; i++) {
+      console.log(
+        `${i + 1}. ${recomendacoes[i].habilidade} — falta em ${recomendacoes[i].quantidade} vaga(s)`
+      );
+    }
   }
 
   console.log("\n===== FIM DO RELATÓRIO =====");
