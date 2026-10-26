@@ -77,14 +77,19 @@ const vagas = [
     "React"
   ]),
 
-  new VagaRemota("New Era", "Desenvolvedor(a) Web Júnior", [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "Lógica de programação",
-    "Consumo de APIs",
-    "Acessibilidade"
-  ], 3000),
+  new VagaRemota(
+    "New Era",
+    "Desenvolvedor(a) Web Júnior",
+    [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Lógica de programação",
+      "Consumo de APIs",
+      "Acessibilidade"
+    ],
+    3000
+  ),
 
   new Vaga("Inova Brasil", "Desenvolvedor(a) Front-End Júnior", [
     "JavaScript",
@@ -103,14 +108,19 @@ const vagas = [
     "Bootstrap"
   ]),
 
-  new VagaRemota("Tech Plus", "Desenvolvedor Front-End Júnior (React)", [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "React",
-    "Git",
-    "TypeScript"
-  ], 4000),
+  new VagaRemota(
+    "Tech Plus",
+    "Desenvolvedor Front-End Júnior (React)",
+    [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Git",
+      "TypeScript"
+    ],
+    4000
+  ),
 
   new Vaga("Astro Soluções", "Desenvolvedor Front-End Júnior", [
     "JavaScript",
@@ -132,10 +142,31 @@ const classificarCompatibilidade = (percentual) => {
   }
 };
 
+const analisarVaga = (vaga, candidato, callback) => {
+  const percentual = vaga.calcularCompatibilidade(candidato);
+  const classificacao = classificarCompatibilidade(percentual);
+
+  callback({
+    vaga: vaga.resumo(),
+    percentual: percentual,
+    classificacao: classificacao
+  });
+};
+
+const criarContadorAnalises = () => {
+  let total = 0;
+
+  return () => {
+    total++;
+    return total;
+  };
+};
+
 const encontrarMelhorVaga = (candidato, vagas) => {
   return vagas.reduce((melhor, atual) => {
     const compatibilidadeMelhor =
       melhor.calcularCompatibilidade(candidato);
+
     const compatibilidadeAtual =
       atual.calcularCompatibilidade(candidato);
 
@@ -226,15 +257,20 @@ const gerarRelatorio = (candidato, vagas) => {
 
   console.log("\n===== ANÁLISE DAS VAGAS =====");
 
+  const contarAnalises = criarContadorAnalises();
+
   for (let i = 0; i < vagas.length; i++) {
     const vaga = vagas[i];
-    const percentual = vaga.calcularCompatibilidade(candidato);
     const faltantes = vaga.listarFaltantes(candidato);
 
-    console.log(`\n${i + 1}. ${vaga.resumo()}`);
-    console.log(
-      `Compatibilidade: ${percentual}% - ${classificarCompatibilidade(percentual)}`
-    );
+    analisarVaga(vaga, candidato, (resultado) => {
+      const numeroAnalise = contarAnalises();
+
+      console.log(`\n${numeroAnalise}. ${resultado.vaga}`);
+      console.log(
+        `Compatibilidade: ${resultado.percentual}% - ${resultado.classificacao}`
+      );
+    });
 
     if (faltantes.length > 0) {
       console.log(`Habilidades faltantes: ${faltantes.join(", ")}`);
@@ -291,4 +327,3 @@ const iniciarSistema = async () => {
 };
 
 iniciarSistema();
-
