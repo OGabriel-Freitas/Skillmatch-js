@@ -266,4 +266,29 @@ const gerarRelatorio = (candidato, vagas) => {
   console.log("\n===== FIM DO RELATÓRIO =====");
 };
 
-gerarRelatorio(candidato, vagas);
+const carregarVagas = () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (vagas.length > 0) {
+        resolve(vagas);
+      } else {
+        reject(new Error("Nenhuma vaga encontrada."));
+      }
+    }, 1000);
+  });
+};
+
+const iniciarSistema = async () => {
+  try {
+    console.log("Carregando vagas...");
+
+    const vagasCarregadas = await carregarVagas();
+
+    gerarRelatorio(candidato, vagasCarregadas);
+  } catch (erro) {
+    console.error("Erro ao carregar as vagas:", erro.message);
+  }
+};
+
+iniciarSistema();
+
