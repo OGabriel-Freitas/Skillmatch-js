@@ -23,7 +23,7 @@ const candidato = new Candidato(
     "Bootstrap",
     "JavaScript",
     "Git",
-    "LÃ³gica de programaÃ§Ã£o",
+    "Lógica de programação",
     "Testes de software"
   ],
   ["Angular", "TypeScript", "SQL"]
@@ -53,24 +53,24 @@ class VagaRemota extends Vaga {
 }
 
 const vagas = [
-  new Vaga("Novo Horizonte", "Front-End JÃºnior", [
+  new Vaga("Novo Horizonte", "Front-End Júnior", [
     "HTML", "CSS", "JavaScript", "Git", "React"
   ]),
-  new VagaRemota("New Era", "Desenvolvedor(a) Web JÃºnior", [
+  new VagaRemota("New Era", "Desenvolvedor(a) Web Júnior", [
     "HTML", "CSS", "JavaScript",
-    "LÃ³gica de programaÃ§Ã£o", "Consumo de APIs", "Acessibilidade"
+    "Lógica de programação", "Consumo de APIs", "Acessibilidade"
   ], 3000),
-  new Vaga("Inova Brasil", "Desenvolvedor(a) Front-End JÃºnior", [
+  new Vaga("Inova Brasil", "Desenvolvedor(a) Front-End Júnior", [
     "JavaScript", "React", "TypeScript",
-    "Git", "Componentes reutilizÃ¡veis", "Testes automatizados"
+    "Git", "Componentes reutilizáveis", "Testes automatizados"
   ]),
-  new Vaga("New Nexus", "Desenvolvedor Front-End JÃºnior", [
+  new Vaga("New Nexus", "Desenvolvedor Front-End Júnior", [
     "HTML", "CSS", "JavaScript", "Git", "Bootstrap"
   ]),
-  new VagaRemota("Tech Plus", "Desenvolvedor Front-End JÃºnior (React)", [
+  new VagaRemota("Tech Plus", "Desenvolvedor Front-End Júnior (React)", [
     "HTML", "CSS", "JavaScript", "React", "Git", "TypeScript"
   ], 4000),
-  new Vaga("Astro SoluÃ§Ãµes", "Desenvolvedor Front-End JÃºnior", [
+  new Vaga("Astro Soluções", "Desenvolvedor Front-End Júnior", [
     "JavaScript", "React", "TypeScript",
     "Testes automatizados", "Consumo de APIs", "Node.js"
   ])
