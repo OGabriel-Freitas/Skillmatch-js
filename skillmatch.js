@@ -131,3 +131,37 @@ const classificarCompatibilidade = (percentual) => {
     return "Baixa compatibilidade";
   }
 };
+
+const gerarRelatorio = (candidato, vagas) => {
+  console.log("===== SKILLMATCH JS: RELATÓRIO =====");
+  console.log(`Candidato: ${candidato.nome}`);
+  console.log(`Área de interesse: ${candidato.areaInteresse}`);
+  console.log(`Experiência: ${candidato.experienciaAnos} ano(s)`);
+  console.log(`Habilidades: ${candidato.habilidades.join(", ")}`);
+  console.log(
+    `Em aprendizado: ${candidato.emAprendizado.join(", ")}`
+  );
+
+  console.log("\n===== ANÁLISE DAS VAGAS =====");
+
+  for (let i = 0; i < vagas.length; i++) {
+    const vaga = vagas[i];
+    const percentual = vaga.calcularCompatibilidade(candidato);
+    const faltantes = vaga.listarFaltantes(candidato);
+
+    console.log(`\n${i + 1}. ${vaga.resumo()}`);
+    console.log(
+      `Compatibilidade: ${percentual}% - ${classificarCompatibilidade(percentual)}`
+    );
+
+    if (faltantes.length > 0) {
+      console.log(`Habilidades faltantes: ${faltantes.join(", ")}`);
+    } else {
+      console.log("Habilidades faltantes: nenhuma");
+    }
+  }
+
+  console.log("\n===== FIM DO RELATÓRIO =====");
+};
+
+gerarRelatorio(candidato, vagas);
