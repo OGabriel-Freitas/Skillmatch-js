@@ -1,5 +1,6 @@
 
 class Candidato {
+  // Guarda os dados e as habilidades do candidato.
   constructor(nome, areaInteresse, experienciaAnos, habilidades, emAprendizado) {
     this.nome = nome;
     this.areaInteresse = areaInteresse;
@@ -8,11 +9,13 @@ class Candidato {
     this.emAprendizado = emAprendizado;
   }
 
+  // Verifica se o candidato possui determinada habilidade.
   possuiHabilidade(habilidade) {
     return this.habilidades.includes(habilidade);
   }
 }
 
+// Cria o perfil do candidato que será comparado com as vagas.
 const candidato = new Candidato(
   "Gabriel Freitas",
   "Front-end",
@@ -30,12 +33,14 @@ const candidato = new Candidato(
 );
 
 class Vaga {
+  // Guarda os dados e os requisitos de cada vaga.
   constructor(empresa, cargo, requisitos) {
     this.empresa = empresa;
     this.cargo = cargo;
     this.requisitos = requisitos;
   }
 
+  // Calcula a porcentagem de requisitos que o candidato atende.
   calcularCompatibilidade(candidato) {
     const atendidos = this.requisitos.filter((requisito) =>
       candidato.possuiHabilidade(requisito)
@@ -50,28 +55,33 @@ class Vaga {
     );
   }
 
+  // Retorna as habilidades exigidas pela vaga que o candidato não possui.
   listarFaltantes(candidato) {
     return this.requisitos.filter(
       (requisito) => !candidato.possuiHabilidade(requisito)
     );
   }
 
+  // Monta um resumo com o cargo e a empresa.
   resumo() {
     return `${this.cargo} - ${this.empresa}`;
   }
 }
 
+// Herda as características de Vaga e acrescenta o salário.
 class VagaRemota extends Vaga {
   constructor(empresa, cargo, requisitos, salario) {
     super(empresa, cargo, requisitos);
     this.salario = salario;
   }
 
+  // Personaliza o resumo para incluir o tipo de trabalho e o salário.
   resumo() {
     return `${super.resumo()} (Remota, R$ ${this.salario})`;
   }
 }
 
+// Cadastra as vagas fictícias disponíveis para análise.
 const vagas = [
   new Vaga("Novo Horizonte", "Front-End Júnior", [
     "HTML",
@@ -136,6 +146,7 @@ const vagas = [
   ]),
 ];
 
+// Classifica a compatibilidade de acordo com a porcentagem obtida.
 const classificarCompatibilidade = (percentual) => {
   if (percentual >= 80) {
     return "Alta compatibilidade";
@@ -146,6 +157,7 @@ const classificarCompatibilidade = (percentual) => {
   }
 };
 
+// Analisa uma vaga e entrega o resultado por meio de um callback.
 const analisarVaga = (vaga, candidato, callback) => {
   const percentual = vaga.calcularCompatibilidade(candidato);
   const classificacao = classificarCompatibilidade(percentual);
@@ -157,6 +169,7 @@ const analisarVaga = (vaga, candidato, callback) => {
   });
 };
 
+// Cria um contador que mantém a quantidade de análises realizadas.
 const criarContadorAnalises = () => {
   let total = 0;
 
@@ -166,6 +179,7 @@ const criarContadorAnalises = () => {
   };
 };
 
+// Encontra a vaga com a maior porcentagem de compatibilidade.
 const encontrarMelhorVaga = (candidato, vagas) => {
   return vagas.reduce((melhor, atual) => {
     if (melhor === null) {
@@ -186,6 +200,7 @@ const encontrarMelhorVaga = (candidato, vagas) => {
   }, null);
 };
 
+// Conta quantas vagas exigem cada habilidade que o candidato ainda não possui.
 const montarFaltantes = (candidato, vagas) => {
   const faltantes = {};
 
@@ -209,6 +224,7 @@ const montarFaltantes = (candidato, vagas) => {
   return faltantes;
 };
 
+// Organiza as habilidades faltantes por prioridade de estudo.
 const gerarRecomendacaoEstudos = (candidato, vagas) => {
   const faltantes = montarFaltantes(candidato, vagas);
   let habilidadesRestantes = Object.keys(faltantes);
@@ -239,6 +255,7 @@ const gerarRecomendacaoEstudos = (candidato, vagas) => {
   return ranking;
 };
 
+// Exibe o perfil do candidato, as análises, a melhor vaga e as recomendações.
 const gerarRelatorio = (candidato, vagas) => {
   console.log("===== SKILLMATCH JS: RELATÓRIO =====");
   console.log(`Candidato: ${candidato.nome}`);
@@ -247,6 +264,7 @@ const gerarRelatorio = (candidato, vagas) => {
   console.log(`Habilidades: ${candidato.habilidades.join(", ")}`);
   console.log(`Em aprendizado: ${candidato.emAprendizado.join(", ")}`);
 
+  // Lista as empresas das vagas cadastradas.
   const empresas = vagas.map((vaga) => vaga.empresa);
 
   console.log(
@@ -257,6 +275,7 @@ const gerarRelatorio = (candidato, vagas) => {
 
   const contarAnalises = criarContadorAnalises();
 
+  // Analisa cada vaga e imprime todos os seus resultados juntos.
   for (let i = 0; i < vagas.length; i++) {
     const vaga = vagas[i];
     const faltantes = vaga.listarFaltantes(candidato);
@@ -268,15 +287,16 @@ const gerarRelatorio = (candidato, vagas) => {
       console.log(
         `Compatibilidade: ${resultado.percentual}% - ${resultado.classificacao}`
       );
-    });
 
-    if (faltantes.length > 0) {
-      console.log(`Habilidades faltantes: ${faltantes.join(", ")}`);
-    } else {
-      console.log("Habilidades faltantes: nenhuma");
-    }
+      if (faltantes.length > 0) {
+        console.log(`Habilidades faltantes: ${faltantes.join(", ")}`);
+      } else {
+        console.log("Habilidades faltantes: nenhuma");
+      }
+    });
   }
 
+  // Identifica e exibe a vaga mais compatível com o candidato.
   const melhorVaga = encontrarMelhorVaga(candidato, vagas);
 
   console.log("\n===== MELHOR VAGA =====");
@@ -293,6 +313,7 @@ const gerarRelatorio = (candidato, vagas) => {
     );
   }
 
+  // Exibe as habilidades que devem ser priorizadas nos estudos.
   const recomendacoes = gerarRecomendacaoEstudos(candidato, vagas);
 
   console.log("\n===== PRIORIDADE DE ESTUDO =====");
@@ -310,6 +331,7 @@ const gerarRelatorio = (candidato, vagas) => {
   console.log("\n===== FIM DO RELATÓRIO =====");
 };
 
+// Simula o carregamento das vagas de um servidor usando uma Promise.
 const carregarVagas = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -322,6 +344,7 @@ const carregarVagas = () => {
   });
 };
 
+// Inicia o sistema, aguarda o carregamento e trata possíveis erros.
 const iniciarSistema = async () => {
   try {
     console.log("Carregando vagas...");
@@ -334,4 +357,5 @@ const iniciarSistema = async () => {
   }
 };
 
+// Executa o sistema.
 iniciarSistema();
