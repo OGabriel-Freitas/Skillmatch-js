@@ -36,6 +36,22 @@ class Vaga {
     this.requisitos = requisitos;
   }
 
+  calcularCompatibilidade(candidato) {
+    const atendidos = this.requisitos.filter((requisito) =>
+      candidato.possuiHabilidade(requisito)
+    );
+
+    return Math.round(
+      (atendidos.length / this.requisitos.length) * 100
+    );
+  }
+
+  listarFaltantes(candidato) {
+    return this.requisitos.filter(
+      (requisito) => !candidato.possuiHabilidade(requisito)
+    );
+  }
+
   resumo() {
     return `${this.cargo} - ${this.empresa}`;
   }
@@ -54,24 +70,54 @@ class VagaRemota extends Vaga {
 
 const vagas = [
   new Vaga("Novo Horizonte", "Front-End Júnior", [
-    "HTML", "CSS", "JavaScript", "Git", "React"
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Git",
+    "React"
   ]),
+
   new VagaRemota("New Era", "Desenvolvedor(a) Web Júnior", [
-    "HTML", "CSS", "JavaScript",
-    "Lógica de programação", "Consumo de APIs", "Acessibilidade"
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Lógica de programação",
+    "Consumo de APIs",
+    "Acessibilidade"
   ], 3000),
+
   new Vaga("Inova Brasil", "Desenvolvedor(a) Front-End Júnior", [
-    "JavaScript", "React", "TypeScript",
-    "Git", "Componentes reutilizáveis", "Testes automatizados"
+    "JavaScript",
+    "React",
+    "TypeScript",
+    "Git",
+    "Componentes reutilizáveis",
+    "Testes automatizados"
   ]),
+
   new Vaga("New Nexus", "Desenvolvedor Front-End Júnior", [
-    "HTML", "CSS", "JavaScript", "Git", "Bootstrap"
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Git",
+    "Bootstrap"
   ]),
+
   new VagaRemota("Tech Plus", "Desenvolvedor Front-End Júnior (React)", [
-    "HTML", "CSS", "JavaScript", "React", "Git", "TypeScript"
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "React",
+    "Git",
+    "TypeScript"
   ], 4000),
+
   new Vaga("Astro Soluções", "Desenvolvedor Front-End Júnior", [
-    "JavaScript", "React", "TypeScript",
-    "Testes automatizados", "Consumo de APIs", "Node.js"
+    "JavaScript",
+    "React",
+    "TypeScript",
+    "Testes automatizados",
+    "Consumo de APIs",
+    "Node.js"
   ])
 ];
